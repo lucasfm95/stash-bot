@@ -28,12 +28,12 @@ public sealed class UpdatePollingService(
             }
             catch (TelegramApiException ex) when (ex.ErrorCode is 401 or 404)
             {
-                Console.Error.WriteLine($"Token inválido ou bot não encontrado (erro {ex.ErrorCode}). Encerrando.");
+                Console.Error.WriteLine($"Invalid token or bot not found (error {ex.ErrorCode}). Shutting down.");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[polling] getUpdates falhou: {ex.Message}. Nova tentativa em {ErrorBackoffDelay.TotalSeconds}s...");
+                Console.Error.WriteLine($"[polling] getUpdates failed: {ex.Message}. Retrying in {ErrorBackoffDelay.TotalSeconds}s...");
                 try
                 {
                     await Task.Delay(ErrorBackoffDelay, cancellationToken);
@@ -66,7 +66,7 @@ public sealed class UpdatePollingService(
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine($"[handler] falha ao processar update {update.UpdateId}: {ex.Message}");
+                    Console.Error.WriteLine($"[handler] failed to process update {update.UpdateId}: {ex.Message}");
                 }
             }
         }

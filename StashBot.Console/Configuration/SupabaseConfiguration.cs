@@ -8,22 +8,22 @@ public sealed record SupabaseConfiguration(string Url, string ServiceRoleKey)
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new InvalidOperationException(
-                "Variável de ambiente SUPABASE_URL não definida. " +
-                "Defina-a com a URL do projeto Supabase (ex: https://xxxxx.supabase.co).");
+                "Environment variable SUPABASE_URL is not set. " +
+                "Set it to the Supabase project URL (e.g.: https://xxxxx.supabase.co).");
         }
 
         if (!Uri.TryCreate(url, UriKind.Absolute, out _))
         {
             throw new InvalidOperationException(
-                $"Variável de ambiente SUPABASE_URL='{url}' não é uma URL absoluta válida (ex: https://xxxxx.supabase.co).");
+                $"Environment variable SUPABASE_URL='{url}' is not a valid absolute URL (e.g.: https://xxxxx.supabase.co).");
         }
 
         var serviceRoleKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_ROLE_KEY");
         if (string.IsNullOrWhiteSpace(serviceRoleKey))
         {
             throw new InvalidOperationException(
-                "Variável de ambiente SUPABASE_SERVICE_ROLE_KEY não definida. " +
-                "Defina-a com a service_role key do projeto Supabase (Project Settings > API).");
+                "Environment variable SUPABASE_SERVICE_ROLE_KEY is not set. " +
+                "Set it to the Supabase project's service_role key (Project Settings > API).");
         }
 
         return new SupabaseConfiguration(url, serviceRoleKey);

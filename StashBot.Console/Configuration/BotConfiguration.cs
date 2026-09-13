@@ -8,8 +8,8 @@ public sealed record BotConfiguration(string BotToken, long? AllowedChatId)
         if (string.IsNullOrWhiteSpace(token))
         {
             throw new InvalidOperationException(
-                "Variável de ambiente TELEGRAM_BOT_TOKEN não definida. " +
-                "Defina-a com o token do bot (obtido via @BotFather) antes de iniciar o StashBot.");
+                "Environment variable TELEGRAM_BOT_TOKEN is not set. " +
+                "Set it to the bot token (obtained via @BotFather) before starting StashBot.");
         }
 
         long? allowedChatId = null;
@@ -19,7 +19,7 @@ public sealed record BotConfiguration(string BotToken, long? AllowedChatId)
             if (!long.TryParse(allowedChatIdRaw, out var parsedChatId))
             {
                 throw new InvalidOperationException(
-                    $"Variável de ambiente TELEGRAM_ALLOWED_CHAT_ID='{allowedChatIdRaw}' não é um número válido.");
+                    $"Environment variable TELEGRAM_ALLOWED_CHAT_ID='{allowedChatIdRaw}' is not a valid number.");
             }
 
             allowedChatId = parsedChatId;

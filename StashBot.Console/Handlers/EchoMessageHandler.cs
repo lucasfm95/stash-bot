@@ -10,7 +10,7 @@ public sealed class EchoMessageHandler(TelegramBotClient telegramClient, Supabas
     {
         await messageStore.InsertMessageAsync(message, cancellationToken);
 
-        var replyText = $"Recebido e salvo: {message.Text}";
+        var replyText = $"Received and saved. MessageId: {message.MessageId}";
         await telegramClient.SendMessageAsync(message.Chat.Id, replyText, message.MessageId, cancellationToken);
     }
 }

@@ -13,7 +13,7 @@ try
 }
 catch (InvalidOperationException ex)
 {
-    Console.Error.WriteLine($"Erro de configuração: {ex.Message}");
+    Console.Error.WriteLine($"Configuration error: {ex.Message}");
     return 1;
 }
 
@@ -41,11 +41,11 @@ using var cts = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) =>
 {
     e.Cancel = true;
-    Console.WriteLine("Encerramento solicitado (Ctrl+C)...");
+    Console.WriteLine("Shutdown requested (Ctrl+C)...");
     cts.Cancel();
 };
 
-Console.WriteLine("StashBot iniciado. Pressione Ctrl+C para parar.");
+Console.WriteLine("StashBot started. Press Ctrl+C to stop.");
 try
 {
     await polling.RunAsync(cts.Token);
@@ -55,5 +55,5 @@ catch (TelegramApiException)
     return 1;
 }
 
-Console.WriteLine("StashBot encerrado.");
+Console.WriteLine("StashBot stopped.");
 return 0;
