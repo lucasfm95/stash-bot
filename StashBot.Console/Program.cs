@@ -26,7 +26,8 @@ using var botClient = new TelegramBotClient(botConfig.BotToken, telegramHttpClie
 
 using var supabaseHttpClient = new HttpClient
 {
-    BaseAddress = new Uri($"{supabaseConfig.Url.TrimEnd('/')}/rest/v1/")
+    BaseAddress = new Uri($"{supabaseConfig.Url.TrimEnd('/')}/rest/v1/"),
+    Timeout = TimeSpan.FromSeconds(15)
 };
 supabaseHttpClient.DefaultRequestHeaders.Add("apikey", supabaseConfig.ServiceRoleKey);
 supabaseHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseConfig.ServiceRoleKey}");

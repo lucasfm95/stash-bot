@@ -12,6 +12,12 @@ public sealed record SupabaseConfiguration(string Url, string ServiceRoleKey)
                 "Defina-a com a URL do projeto Supabase (ex: https://xxxxx.supabase.co).");
         }
 
+        if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+        {
+            throw new InvalidOperationException(
+                $"Variável de ambiente SUPABASE_URL='{url}' não é uma URL absoluta válida (ex: https://xxxxx.supabase.co).");
+        }
+
         var serviceRoleKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_ROLE_KEY");
         if (string.IsNullOrWhiteSpace(serviceRoleKey))
         {
