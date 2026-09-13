@@ -5,7 +5,8 @@ namespace StashBot.Polling;
 
 public sealed class UpdatePollingService(
     TelegramBotClient client,
-    Func<Message, CancellationToken, Task> onTextMessage)
+    Func<Message, CancellationToken, Task> onTextMessage,
+    long? allowedChatId = null)
 {
     private const int LongPollTimeoutSeconds = 30;
     private static readonly TimeSpan ErrorBackoffDelay = TimeSpan.FromSeconds(5);
@@ -48,8 +49,13 @@ public sealed class UpdatePollingService(
             foreach (var update in updates)
             {
                 offset = update.UpdateId + 1;
-                
+
                 if (update.Message?.Text is null)
+                {
+                    continue;
+                }
+
+                if (allowedChatId is not null && update.Message.Chat.Id != allowedChatId)
                 {
                     continue;
                 }
