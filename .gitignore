@@ -3,3 +3,5 @@ obj/
 .vs/
 .idea/
 .DS_Store
+.env
+data/

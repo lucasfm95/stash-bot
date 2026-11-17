@@ -1,0 +1,25 @@
+# Postgres para desenvolvimento/validação local. Reproduz o serviço que roda na VPS.
+# Uso: cp .env.example .env && docker compose up -d
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres-main
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+    networks:
+      - db_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  db_net:
+    name: db_net
