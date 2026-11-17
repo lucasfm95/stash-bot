@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
@@ -8,4 +7,15 @@
         <RootNamespace>StashBot</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\StashBot.Infrastructure\StashBot.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Required for the Console to be the startup project of `dotnet ef`. Not shipped with the app. -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>

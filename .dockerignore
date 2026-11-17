@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+.git/
+.github/
+.idea/
+.vs/
+.claude/
+.env
+.env.*
+data/
+docker-compose.yml
+*.md

@@ -1,15 +1,16 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using StashBot.Configuration;
 using StashBot.Handlers;
+using StashBot.Infrastructure.Persistence;
 using StashBot.Polling;
-using StashBot.Storage;
 using StashBot.Telegram;
 
 BotConfiguration botConfig;
-SupabaseConfiguration supabaseConfig;
+DatabaseConfiguration databaseConfig;
 try
 {
     botConfig = BotConfiguration.LoadFromEnvironment();
-    supabaseConfig = SupabaseConfiguration.LoadFromEnvironment();
+    databaseConfig = DatabaseConfiguration.LoadFromEnvironment();
 }
 catch (InvalidOperationException ex)
 {
@@ -24,15 +25,9 @@ using var telegramHttpClient = new HttpClient
 };
 using var botClient = new TelegramBotClient(botConfig.BotToken, telegramHttpClient);
 
-using var supabaseHttpClient = new HttpClient
-{
-    BaseAddress = new Uri($"{supabaseConfig.Url.TrimEnd('/')}/rest/v1/"),
-    Timeout = TimeSpan.FromSeconds(15)
-};
-supabaseHttpClient.DefaultRequestHeaders.Add("apikey", supabaseConfig.ServiceRoleKey);
-supabaseHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseConfig.ServiceRoleKey}");
-supabaseHttpClient.DefaultRequestHeaders.Add("Prefer", "return=minimal");
-using var messageStore = new SupabaseMessageStore(supabaseHttpClient);
+var dbContextFactory = new PooledDbContextFactory<StashBotDbContext>(
+    DatabaseOptions.Create(databaseConfig.ConnectionString));
+var messageStore = new EfMessageStore(dbContextFactory);
 
 var handler = new EchoMessageHandler(botClient, messageStore);
 var polling = new UpdatePollingService(botClient, handler.HandleAsync, botConfig.AllowedChatId);
@@ -44,6 +39,20 @@ Console.CancelKeyPress += (_, e) =>
     Console.WriteLine("Shutdown requested (Ctrl+C)...");
     cts.Cancel();
 };
+
+try
+{
+    await DatabaseMigrator.MigrateAsync(dbContextFactory, Console.Out, cts.Token);
+}
+catch (OperationCanceledException) when (cts.IsCancellationRequested)
+{
+    return 0;
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"Database error: could not apply migrations: {ex.Message}");
+    return 1;
+}
 
 Console.WriteLine("StashBot started. Press Ctrl+C to stop.");
 try
